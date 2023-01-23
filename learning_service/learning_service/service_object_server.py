@@ -6,6 +6,7 @@
 @说明: ROS2服务示例-提供目标识别服务
 """
 
+import re
 import rclpy                                           # ROS2 Python接口库
 from rclpy.node import Node                            # ROS2 节点类
 from sensor_msgs.msg import Image                      # 图像消息类型
@@ -14,8 +15,8 @@ from cv_bridge import CvBridge                         # ROS与OpenCV图像转�
 import cv2                                             # Opencv图像处理库
 from learning_interface.srv import GetObjectPosition   # 自定义的服务接口
 
-lower_red = np.array([0, 90, 128])     # 红色的HSV阈值下限
-upper_red = np.array([180, 255, 255])  # 红色的HSV阈值上限
+lower_red = np.array([0, 75, 75])     # 红色的HSV阈值下限
+upper_red = np.array([20, 100, 100])  # 红色的HSV阈值上限
 
 class ImageSubscriber(Node):
     def __init__(self, name):
@@ -33,6 +34,8 @@ class ImageSubscriber(Node):
     def object_detect(self, image):
         hsv_img = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)             # 图像从BGR颜色模型转换为HSV模型
         mask_red = cv2.inRange(hsv_img, lower_red, upper_red)        # 图像二值化
+        cv2.imshow('mask_red',mask_red)
+        cv2.waitKey(0)
         contours, hierarchy = cv2.findContours(
             mask_red, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)          # 图像中轮廓检测
 
